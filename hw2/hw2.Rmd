@@ -1,8 +1,15 @@
 ---
 title: "Strings and Functions"
-author: 
+author: "Anuj Desai"
+date: "June 14, 2016"
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+library(stringr)
+library(readr)
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Introduction
 
@@ -71,42 +78,42 @@ states <- rownames(USArrests)
 
 1. How many states contain the letter `i`?
 ```{r}
-
+length(str_subset(states, "i"))
 ```
 
 2. How many states do not contain the letter `a`?
 ```{r}
-
+str_subset(states, "[^aA]")
 ```
 
 3. Which states contain the letter `j`?
 ```{r}
-
+str_subset(states, "[jJ]")
 ```
 
 4. Which states are formed by two words?
 ```{r}
-
+str_subset(states, " ")
 ```
 
 5. Which states start with `W` and end with a consonant (non-vowel)?
 ```{r}
-
+str_subset(states, "^[W].+[^aeiouAEIOU]$")
 ```
 
 6. Which states contain at least three `i`'s (e.g. Illinois)?
 ```{r}
-
+str_subset(states, "[iI]")
 ```
 
 7. Which states contain five vowels (e.g. California)?
 ```{r}
-
+str_subset(states, "aeiouAEIOU")
 ```
 
 8. Which states contain three consecutive vowels (e.g. Hawaii)?
 ```{r}
-
+str_subset(states, "[aeiouAEIOU]{3}")
 ```
 
 ### Problem 3 Colors in Hexadecimal Notation (4 pts)
@@ -134,10 +141,15 @@ Write a function called `reverse_chars` that reverses a string by characters. Yo
 
 ```{r}
 # reverse_chars()
+reverse_chars <- function(str) {
+  split_string <- str_split(as.character(str), pattern = "")
+  #str_c(rev(split_string))
+  rev(split_string)
+}
 ```
 
 Change `eval` to `TRUE` to test your function.
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 reverse_chars("Rictusempra")
 reverse_chars("Lumox Maxima")
 reverse_chars("Repello Muggletum")

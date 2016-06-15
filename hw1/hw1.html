@@ -158,9 +158,9 @@ longest_dep_delay</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li>How long were the top 10 longest flights measured using <code>air_time</code>? <strong>longest_flights</strong></li>
 </ol>
-<pre class="r"><code>longest_flights &lt;- head(sort(flights$arr_time, decreasing = TRUE), 10)
+<pre class="r"><code>longest_flights &lt;- head(sort(flights$air_time, decreasing = TRUE), 10)
 longest_flights</code></pre>
-<pre><code>##  [1] 2400 2400 2400 2400 2400 2400 2400 2400 2400 2400</code></pre>
+<pre><code>##  [1] 695 691 686 686 683 679 676 676 675 671</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>What is the average departure delay time for United Airlines (carrier UA)? <strong>ua_delay</strong></li>
 </ol>

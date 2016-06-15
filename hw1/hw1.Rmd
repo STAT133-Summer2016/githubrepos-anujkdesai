@@ -50,7 +50,7 @@ longest_dep_delay
 
 4. How long were the top 10 longest flights measured using `air_time`? __longest_flights__
 ```{r}
-longest_flights <- head(sort(flights$arr_time, decreasing = TRUE), 10)
+longest_flights <- head(sort(flights$air_time, decreasing = TRUE), 10)
 longest_flights
 ```
 
