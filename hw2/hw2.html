@@ -174,7 +174,8 @@ $(document).ready(function () {
 <p>Now imagine that you need to generate 100 file names. You could write a vector with 100 file names but it’s going to take you a while.</p>
 <p>Generate a character vector named <code>files100</code> containing 100 files names of the form <code>plotxxx.png</code> i.e. the names should look like <code>plot001.png</code>, <code>plot002.png</code>, <code>plot003.png</code>, …, <code>plot099.png</code>, <code>plot100.png</code>.</p>
 <p>Do not use any looping constructions (we haven’t covered this yet, and they’re slower in <code>R</code> for this task).</p>
-<pre class="r"><code># Problem 1</code></pre>
+<pre class="r"><code># Problem 1
+files100 &lt;- str_c(&quot;plot&quot;, str_pad(1:100, width = 3, side = &quot;left&quot;, pad = 00), &quot;.png&quot;)</code></pre>
 </div>
 <div id="problem-2---usa-states-names-8-pts" class="section level3">
 <h3>Problem 2 - USA States Names (8 pts)</h3>
@@ -188,20 +189,8 @@ $(document).ready(function () {
 <ol start="2" style="list-style-type: decimal">
 <li>How many states do not contain the letter <code>a</code>?</li>
 </ol>
-<pre class="r"><code>str_subset(states, &quot;[^aA]&quot;)</code></pre>
-<pre><code>##  [1] &quot;Alabama&quot;        &quot;Alaska&quot;         &quot;Arizona&quot;        &quot;Arkansas&quot;      
-##  [5] &quot;California&quot;     &quot;Colorado&quot;       &quot;Connecticut&quot;    &quot;Delaware&quot;      
-##  [9] &quot;Florida&quot;        &quot;Georgia&quot;        &quot;Hawaii&quot;         &quot;Idaho&quot;         
-## [13] &quot;Illinois&quot;       &quot;Indiana&quot;        &quot;Iowa&quot;           &quot;Kansas&quot;        
-## [17] &quot;Kentucky&quot;       &quot;Louisiana&quot;      &quot;Maine&quot;          &quot;Maryland&quot;      
-## [21] &quot;Massachusetts&quot;  &quot;Michigan&quot;       &quot;Minnesota&quot;      &quot;Mississippi&quot;   
-## [25] &quot;Missouri&quot;       &quot;Montana&quot;        &quot;Nebraska&quot;       &quot;Nevada&quot;        
-## [29] &quot;New Hampshire&quot;  &quot;New Jersey&quot;     &quot;New Mexico&quot;     &quot;New York&quot;      
-## [33] &quot;North Carolina&quot; &quot;North Dakota&quot;   &quot;Ohio&quot;           &quot;Oklahoma&quot;      
-## [37] &quot;Oregon&quot;         &quot;Pennsylvania&quot;   &quot;Rhode Island&quot;   &quot;South Carolina&quot;
-## [41] &quot;South Dakota&quot;   &quot;Tennessee&quot;      &quot;Texas&quot;          &quot;Utah&quot;          
-## [45] &quot;Vermont&quot;        &quot;Virginia&quot;       &quot;Washington&quot;     &quot;West Virginia&quot; 
-## [49] &quot;Wisconsin&quot;      &quot;Wyoming&quot;</code></pre>
+<pre class="r"><code>length(str_subset(states, &quot;^[^aA]*$&quot;))</code></pre>
+<pre><code>## [1] 14</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>Which states contain the letter <code>j</code>?</li>
 </ol>
@@ -222,19 +211,14 @@ $(document).ready(function () {
 <ol start="6" style="list-style-type: decimal">
 <li>Which states contain at least three <code>i</code>’s (e.g. Illinois)?</li>
 </ol>
-<pre class="r"><code>str_subset(states, &quot;[iI]&quot;)</code></pre>
-<pre><code>##  [1] &quot;Arizona&quot;        &quot;California&quot;     &quot;Connecticut&quot;    &quot;Florida&quot;       
-##  [5] &quot;Georgia&quot;        &quot;Hawaii&quot;         &quot;Idaho&quot;          &quot;Illinois&quot;      
-##  [9] &quot;Indiana&quot;        &quot;Iowa&quot;           &quot;Louisiana&quot;      &quot;Maine&quot;         
-## [13] &quot;Michigan&quot;       &quot;Minnesota&quot;      &quot;Mississippi&quot;    &quot;Missouri&quot;      
-## [17] &quot;New Hampshire&quot;  &quot;New Mexico&quot;     &quot;North Carolina&quot; &quot;Ohio&quot;          
-## [21] &quot;Pennsylvania&quot;   &quot;Rhode Island&quot;   &quot;South Carolina&quot; &quot;Virginia&quot;      
-## [25] &quot;Washington&quot;     &quot;West Virginia&quot;  &quot;Wisconsin&quot;      &quot;Wyoming&quot;</code></pre>
+<pre class="r"><code>str_subset(states, &quot;.*[iI].*[iI].*[iI]&quot;)</code></pre>
+<pre><code>## [1] &quot;Illinois&quot;      &quot;Mississippi&quot;   &quot;Virginia&quot;      &quot;West Virginia&quot;</code></pre>
 <ol start="7" style="list-style-type: decimal">
 <li>Which states contain five vowels (e.g. California)?</li>
 </ol>
-<pre class="r"><code>str_subset(states, &quot;aeiouAEIOU&quot;)</code></pre>
-<pre><code>## character(0)</code></pre>
+<pre class="r"><code>str_subset(states, &quot;(.*[aeiouAEIOU]){5}&quot;)</code></pre>
+<pre><code>## [1] &quot;California&quot;     &quot;Louisiana&quot;      &quot;North Carolina&quot; &quot;South Carolina&quot;
+## [5] &quot;South Dakota&quot;   &quot;West Virginia&quot;</code></pre>
 <ol start="8" style="list-style-type: decimal">
 <li>Which states contain three consecutive vowels (e.g. Hawaii)?</li>
 </ol>
@@ -244,52 +228,60 @@ $(document).ready(function () {
 <div id="problem-3-colors-in-hexadecimal-notation-4-pts" class="section level3">
 <h3>Problem 3 Colors in Hexadecimal Notation (4 pts)</h3>
 <p>Write a function <code>is_hex()</code> that checks whether the input is a valid color in hexadecimal notation. A hex color starts with a hash <code>#</code> symbol followed by six hexadecimal digits: 0 to 9, and the first six letters A, B, C, D, E, F. Your function should not distinguish between upper and lower case letters.</p>
-<pre class="r"><code># is_hex()</code></pre>
+<pre class="r"><code># is_hex()
+is_hex &lt;- function(hex) {
+  return(str_detect(hex,&quot;^#[0-9A-Fa-f]{6}$&quot;))
+}</code></pre>
 <p>Change <code>eval</code> to <code>TRUE</code> to test your function.</p>
-<pre class="r"><code>is_hex(&quot;#ff0000&quot;)  # TRUE
-is_hex(&quot;#123456&quot;)  # TRUE
-is_hex(&quot;#12Fb56&quot;)  # TRUE
-
-is_hex(&quot;#1234GF&quot;)  # FALSE
-is_hex(&quot;#1234567&quot;) # FALSE
-is_hex(&quot;blue&quot;)     # FALSE</code></pre>
+<pre class="r"><code>is_hex(&quot;#ff0000&quot;)  # TRUE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_hex(&quot;#123456&quot;)  # TRUE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_hex(&quot;#12Fb56&quot;)  # TRUE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_hex(&quot;#1234GF&quot;)  # FALSE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>is_hex(&quot;#1234567&quot;) # FALSE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>is_hex(&quot;blue&quot;)     # FALSE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="problem-4---reversing-characters-4-pts" class="section level3">
 <h3>Problem 4 - Reversing Characters (4 pts)</h3>
 <p>Write a function called <code>reverse_chars</code> that reverses a string by characters. You may find the <code>rev</code> function useful.</p>
 <pre class="r"><code># reverse_chars()
 reverse_chars &lt;- function(str) {
-  split_string &lt;- str_split(as.character(str), pattern = &quot;&quot;)
-  #str_c(rev(split_string))
-  rev(split_string)
+  split_string &lt;- str_sub(str, seq(1, str_length(str), 1), seq(1, str_length(str), 1))
+  str_c(rev(split_string), sep = &quot;&quot;, collapse = &quot;&quot;)
 }</code></pre>
 <p>Change <code>eval</code> to <code>TRUE</code> to test your function.</p>
 <pre class="r"><code>reverse_chars(&quot;Rictusempra&quot;)</code></pre>
-<pre><code>## [[1]]
-##  [1] &quot;R&quot; &quot;i&quot; &quot;c&quot; &quot;t&quot; &quot;u&quot; &quot;s&quot; &quot;e&quot; &quot;m&quot; &quot;p&quot; &quot;r&quot; &quot;a&quot;</code></pre>
+<pre><code>## [1] &quot;arpmesutciR&quot;</code></pre>
 <pre class="r"><code>reverse_chars(&quot;Lumox Maxima&quot;)</code></pre>
-<pre><code>## [[1]]
-##  [1] &quot;L&quot; &quot;u&quot; &quot;m&quot; &quot;o&quot; &quot;x&quot; &quot; &quot; &quot;M&quot; &quot;a&quot; &quot;x&quot; &quot;i&quot; &quot;m&quot; &quot;a&quot;</code></pre>
+<pre><code>## [1] &quot;amixaM xomuL&quot;</code></pre>
 <pre class="r"><code>reverse_chars(&quot;Repello Muggletum&quot;)</code></pre>
-<pre><code>## [[1]]
-##  [1] &quot;R&quot; &quot;e&quot; &quot;p&quot; &quot;e&quot; &quot;l&quot; &quot;l&quot; &quot;o&quot; &quot; &quot; &quot;M&quot; &quot;u&quot; &quot;g&quot; &quot;g&quot; &quot;l&quot; &quot;e&quot; &quot;t&quot; &quot;u&quot; &quot;m&quot;</code></pre>
+<pre><code>## [1] &quot;mutelgguM ollepeR&quot;</code></pre>
 </div>
 <div id="problem-5---cleaning-xml-data-4-points" class="section level3">
 <h3>Problem 5 - Cleaning XML Data (4 points)</h3>
 <p>Rarely does text data come clean enough for immediate use. In this exercise, you’ll get a taste of parsing XML Data, which a non-tabular data format that makes use of tags. The data are sometimes presented in the following form:</p>
-<pre><code>&lt;tag_name&gt;data&lt;\tag_name&gt;</code></pre>
+<pre><code>&lt;tag_name&gt;data&lt;/tag_name&gt;</code></pre>
 <p>Your job is to write a function <code>remove_tag</code> that takes a vector of text from an XML document and removes the tags, returning a character vector with only the data values. So, for example:</p>
 <ul>
-<li><code>&lt;common&gt;dandelion&lt;\common&gt;</code> is converted to <code>dandelion</code></li>
-<li><code>&lt;genus&gt;Taraxacum&lt;\genus&gt;</code> is converted to <code>Taraxacum</code></li>
-<li><code>&lt;kingdom&gt;Plantae&lt;\kingdom&gt;</code> is converted to <code>Plantae</code></li>
+<li><code>&lt;common&gt;dandelion&lt;/common&gt;</code> is converted to <code>dandelion</code></li>
+<li><code>&lt;genus&gt;Taraxacum&lt;/genus&gt;</code> is converted to <code>Taraxacum</code></li>
+<li><code>&lt;kingdom&gt;Plantae&lt;/kingdom&gt;</code> is converted to <code>Plantae</code></li>
 </ul>
-<pre class="r"><code># Your code</code></pre>
+<pre class="r"><code># Your code
+remove_tag &lt;- function(text) {
+  str_replace_all(text, &quot;&lt;/?+[a-z]{1,}&gt;&quot;, &quot;&quot;)
+}</code></pre>
 <p>Test your code:</p>
-<pre class="r"><code>phylo &lt;- c(&quot;&lt;common&gt;dandelion&lt;\common&gt;&quot;,
-           &quot;&lt;genus&gt;Taraxacum&lt;\genus&gt;&quot;,
-           &quot;&lt;kingdom&gt;Plantae&lt;\kingdom&gt;&quot;)
+<pre class="r"><code>phylo &lt;- c(&quot;&lt;common&gt;dandelion&lt;/common&gt;&quot;,
+           &quot;&lt;genus&gt;Taraxacum&lt;/genus&gt;&quot;,
+           &quot;&lt;kingdom&gt;Plantae&lt;/kingdom&gt;&quot;)
 remove_tag(phylo)</code></pre>
+<pre><code>## [1] &quot;dandelion&quot; &quot;Taraxacum&quot; &quot;Plantae&quot;</code></pre>
 </div>
 <div id="problem-6---processing-dna-12-points" class="section level3">
 <h3>Problem 6 - Processing DNA (12 points)</h3>
@@ -302,11 +294,26 @@ remove_tag(phylo)</code></pre>
 <li>Break this problem down into steps. This is more than a one-liner</li>
 <li><code>str_replace_all</code> can take a named vector as one of its arguments.</li>
 </ul>
-<pre class="r"><code># dna_to_aa()</code></pre>
+<pre class="r"><code># dna_to_aa()
+codons &lt;- read_csv(&quot;codons&quot;)
+dna_to_aa &lt;- function(dna_seq){
+  if (str_detect(dna_seq, &quot;.*[^CGAT]&quot;)) {
+    stop(&quot;Invalid DNA sequence&quot;)
+  }
+  triplets &lt;- substring(dna_seq, seq(1, nchar(dna_seq), 3), 
+                        seq(3, nchar(dna_seq), 3))
+  amino_acid &lt;- as.character(codons$amino_acid)
+  names(amino_acid) &lt;- codons$dna_triplet
+  aa_seq &lt;- str_replace_all(triplets, amino_acid)
+  str_c(aa_seq, &quot;&quot;, collapse = &quot;&quot;)
+}</code></pre>
 <p>Test your function:</p>
-<pre class="r"><code>dna_to_aa(&quot;GAGCCATGCATT&quot;) # &quot;EPCI&quot;
-dna_to_aa(&quot;ATCTAGATAGTAGGC&quot;) # &quot;IStopIVG&quot;
-dna_to_aa(&quot;UCUGAGAAU&quot;) # &quot;Invalid DNA sequence&quot;</code></pre>
+<pre class="r"><code>dna_to_aa(&quot;GAGCCATGCATT&quot;) # &quot;EPCI&quot;</code></pre>
+<pre><code>## [1] &quot;EPCI&quot;</code></pre>
+<pre class="r"><code>dna_to_aa(&quot;ATCTAGATAGTAGGC&quot;) # &quot;IStopIVG&quot;</code></pre>
+<pre><code>## [1] &quot;IStopIVG&quot;</code></pre>
+<pre class="r"><code>dna_to_aa(&quot;UCUGAGAAU&quot;) # &quot;Invalid DNA sequence&quot;</code></pre>
+<pre><code>## Error in dna_to_aa(&quot;UCUGAGAAU&quot;): Invalid DNA sequence</code></pre>
 </div>
 </div>
 

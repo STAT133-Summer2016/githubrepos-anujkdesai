@@ -65,7 +65,7 @@ Do not use any looping constructions (we haven't covered this yet, and they're s
 
 ```{r}
 # Problem 1
-
+files100 <- str_c("plot", str_pad(1:100, width = 3, side = "left", pad = 00), ".png")
 ```
 
 ### Problem 2 - USA States Names (8 pts)
@@ -83,7 +83,7 @@ length(str_subset(states, "i"))
 
 2. How many states do not contain the letter `a`?
 ```{r}
-str_subset(states, "[^aA]")
+length(str_subset(states, "^[^aA]*$"))
 ```
 
 3. Which states contain the letter `j`?
@@ -103,12 +103,12 @@ str_subset(states, "^[W].+[^aeiouAEIOU]$")
 
 6. Which states contain at least three `i`'s (e.g. Illinois)?
 ```{r}
-str_subset(states, "[iI]")
+str_subset(states, ".*[iI].*[iI].*[iI]")
 ```
 
 7. Which states contain five vowels (e.g. California)?
 ```{r}
-str_subset(states, "aeiouAEIOU")
+str_subset(states, "(.*[aeiouAEIOU]){5}")
 ```
 
 8. Which states contain three consecutive vowels (e.g. Hawaii)?
@@ -122,10 +122,13 @@ Write a function `is_hex()` that checks whether the input is a valid color in he
 
 ```{r}
 # is_hex()
+is_hex <- function(hex) {
+  return(str_detect(hex,"^#[0-9A-Fa-f]{6}$"))
+}
 ```
 
 Change `eval` to `TRUE` to test your function.
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 is_hex("#ff0000")  # TRUE
 is_hex("#123456")  # TRUE
 is_hex("#12Fb56")  # TRUE
@@ -142,9 +145,8 @@ Write a function called `reverse_chars` that reverses a string by characters. Yo
 ```{r}
 # reverse_chars()
 reverse_chars <- function(str) {
-  split_string <- str_split(as.character(str), pattern = "")
-  #str_c(rev(split_string))
-  rev(split_string)
+  split_string <- str_sub(str, seq(1, str_length(str), 1), seq(1, str_length(str), 1))
+  str_c(rev(split_string), sep = "", collapse = "")
 }
 ```
 
@@ -159,23 +161,26 @@ reverse_chars("Repello Muggletum")
 
 Rarely does text data come clean enough for immediate use.  In this exercise, you'll get a taste of parsing XML Data, which a non-tabular data format that makes use of tags.  The data are sometimes presented in the following form:
 ```
-<tag_name>data<\tag_name>
+<tag_name>data</tag_name>
 ```
 Your job is to write a function `remove_tag` that takes a vector of text from an XML document and removes the tags, returning a character vector with only the data values.  So, for example:
 
-* `<common>dandelion<\common>` is converted to `dandelion`
-* `<genus>Taraxacum<\genus>` is converted to `Taraxacum`
-* `<kingdom>Plantae<\kingdom>` is converted to `Plantae`
+* `<common>dandelion</common>` is converted to `dandelion`
+* `<genus>Taraxacum</genus>` is converted to `Taraxacum`
+* `<kingdom>Plantae</kingdom>` is converted to `Plantae`
 
 ```{r}
 # Your code
+remove_tag <- function(text) {
+  str_replace_all(text, "</?+[a-z]{1,}>", "")
+}
 ```
 
 Test your code:
-```{r, eval = F}
-phylo <- c("<common>dandelion<\common>",
-           "<genus>Taraxacum<\genus>",
-           "<kingdom>Plantae<\kingdom>")
+```{r, eval = T}
+phylo <- c("<common>dandelion</common>",
+           "<genus>Taraxacum</genus>",
+           "<kingdom>Plantae</kingdom>")
 remove_tag(phylo)
 ```
 
@@ -196,10 +201,22 @@ Hints:
 
 ```{r}
 # dna_to_aa()
+codons <- read_csv("codons")
+dna_to_aa <- function(dna_seq){
+  if (str_detect(dna_seq, ".*[^CGAT]")) {
+    stop("Invalid DNA sequence")
+  }
+  triplets <- substring(dna_seq, seq(1, nchar(dna_seq), 3), 
+                        seq(3, nchar(dna_seq), 3))
+  amino_acid <- as.character(codons$amino_acid)
+  names(amino_acid) <- codons$dna_triplet
+  aa_seq <- str_replace_all(triplets, amino_acid)
+  str_c(aa_seq, "", collapse = "")
+}
 ```
 
 Test your function:
-```{r, eval = F}
+```{r, eval = T, error = T}
 dna_to_aa("GAGCCATGCATT") # "EPCI"
 dna_to_aa("ATCTAGATAGTAGGC") # "IStopIVG"
 dna_to_aa("UCUGAGAAU") # "Invalid DNA sequence"
