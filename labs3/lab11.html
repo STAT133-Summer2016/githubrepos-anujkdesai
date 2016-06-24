@@ -180,12 +180,11 @@ library(lubridate)</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>Use intervals to find how many weeks Destiny’s Child’s Jumpin’ Jumpin’ and Independent Woman Part 1 were on the billboard together.</li>
 </ol>
-<pre class="r"><code>(week[week$track == &quot;Jumpin' Jumpin'&quot; &amp; week$track == &quot;Independent Women Part I&quot;, ])</code></pre>
-<pre><code>## Source: local data frame [0 x 10]
-## 
-## Variables not shown: year &lt;int&gt;, artist.inverted &lt;chr&gt;, track &lt;chr&gt;, time
-##   &lt;chr&gt;, genre &lt;chr&gt;, date.entered &lt;date&gt;, date.peaked &lt;date&gt;, Week &lt;int&gt;,
-##   Rank &lt;chr&gt;, week$date.entered + dweeks(1) &lt;date&gt;.</code></pre>
+<pre class="r"><code>int_jumpin &lt;- (filter(week, track == &quot;Jumpin' Jumpin'&quot;)[[&quot;date.entered&quot;]][1]) %--% ((filter(week, track == &quot;Jumpin' Jumpin'&quot;)[[&quot;date.entered&quot;]][1]) + dweeks(32))
+int_independent &lt;- (filter(week, track == &quot;Independent Women Part I&quot;)[[&quot;date.entered&quot;]][1]) %--% ((filter(week, track == &quot;Independent Women Part I&quot;)[[&quot;date.entered&quot;]][1]) + dweeks(28))
+no_of_weeks &lt;- intersect(int_jumpin, int_independent) / dweeks(1)
+no_of_weeks</code></pre>
+<pre><code>## [1] 13</code></pre>
 <ol start="6" style="list-style-type: decimal">
 <li>Review: Clean the artist column: If the artist’s name is written as <code>last, first</code>, then change the format to <code>first last</code>.</li>
 </ol>

@@ -56,7 +56,10 @@ week <- mutate(week, week$date.entered + dweeks(1))
 
 5.  Use intervals to find how many weeks Destiny's Child's Jumpin' Jumpin' and Independent Woman Part 1 were on the billboard together.
 ```{r}
-(week[week$track == "Jumpin' Jumpin'" & week$track == "Independent Women Part I", ])
+int_jumpin <- (filter(week, track == "Jumpin' Jumpin'")[["date.entered"]][1]) %--% ((filter(week, track == "Jumpin' Jumpin'")[["date.entered"]][1]) + dweeks(32))
+int_independent <- (filter(week, track == "Independent Women Part I")[["date.entered"]][1]) %--% ((filter(week, track == "Independent Women Part I")[["date.entered"]][1]) + dweeks(28))
+no_of_weeks <- intersect(int_jumpin, int_independent) / dweeks(1)
+no_of_weeks
 ```
 
 6.  Review: Clean the artist column: If the artist's name is written as `last, first`, then change the format to `first last`.
