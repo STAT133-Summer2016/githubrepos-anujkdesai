@@ -381,7 +381,13 @@ pop90 &lt;- top90[with(top90, order(sex, name)), ]</code></pre>
 ## 8  2013 84.33  74.02 70.83
 ## 9  2014 84.28  74.38 70.77
 ## 10 2015 84.15  74.28 70.62</code></pre>
-<pre class="r"><code># Your code here</code></pre>
+<pre class="r"><code># Your code here
+top1000males &lt;- babynames %&gt;% 
+  filter(year &gt;= 2006 &amp; year &lt;= 2015 &amp; sex == &quot;M&quot;) %&gt;% 
+  arrange(-n)
+top1000females &lt;- babynames %&gt;% 
+  filter(year &gt;= 2006 &amp; year &lt;= 2015 &amp; sex == &quot;F&quot;) %&gt;% 
+  arrange(-n)</code></pre>
 </div>
 <div id="discrepancy-0-points" class="section level3">
 <h3>Discrepancy (0 points)</h3>
