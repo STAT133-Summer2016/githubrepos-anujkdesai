@@ -1,0 +1,244 @@
+---
+title: "Good Coding Practices"
+author: "Andrew Do"
+date: "July 12, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+sol = TRUE
+```
+
+## Short Exercises
+Rewrite the following according to our class style guide:
+
+1.
+```{r, eval = FALSE}
+x < - c( NA,1,-2,3,-4,5 )
+  y<-3
+  y<-x * - 1
+  y[ y>0 ]
+```
+
+```{r, echo = sol}
+# <Your fix here>
+x <- c(NA, 1, -2, 3, -4, 5)
+y <- 3
+y <- x * -1
+y[y > 0]
+```
+
+2. 
+```{r}
+mean <- function(x) {
+sum (x)/length( x )
+}
+```
+
+```{r, echo = sol}
+# <Your fix here>
+mean <- function(x) {
+  # Computes the mean of a vector
+  #
+  # Args: 
+  #   x: Vector whose mean is to be calculated
+  sum(x) / length(x)
+}
+```
+
+3. 
+```{r}
+library( ggplot2 )
+second_version_of_mpg <- mpg[ mpg$cyl == 6,]
+second_version_of_mpg$class <- as.character(second_version_of_mpg$class)
+ggplot(data=second_version_of_mpg,aes(cty,hwy,color=class))+geom_point()+geom_smooth( method = "lm", se=FALSE ) + labs (title="City vs. Highway MPG" )
+```
+
+```{r, echo = sol}
+# <Your fix here>
+library(ggplot2)
+second_version_of_mpg <- mpg[mpg$cyl == 6, ]
+second_version_of_mpg$class <- as.character(second_version_of_mpg$class)
+ggplot(data = second_version_of_mpg, aes(cty, hwy, color = class)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "City vs. Highway MPG")
+```
+
+## Longer Exercises
+
+Fix the following code with the following goals:
+
+* Readability - an untrained person should be able to guess what's going on
+    + Use meaningful names
+    + Use whitespace to make the code flow
+    + Provide documentation
+    + Use functions from the packages we've covered (they're designed to be readable!)
+  
+* Compactness - do not be more verbose than you have to be
+    + Think of ways to vectorize the function
+    + Avoid copy-paste
+    + Use the `lapply` family
+    + Modularize your code (small functions instead of massive ones)
+  
+* Usable as intended
+    + If necessary, include error messages
+    + Don't force the user to rely on implicit coercion
+    + Output the intentional data type
+
+### Exercise 1
+Infer what the function `d` is doing and rewrite it according to our class style guide.  Include documentation so that future users won't have to decipher the code.
+```{r}
+
+d <- function(f, x, y, s) {
+  stuff<-seq(x,y,by=s)
+  stuff2<-c()
+  for(i in 1:length(stuff)){thing<-f(stuff[i]); stuff2[i]<-thing}
+  m<-max(stuff2)
+  mm<-stuff[stuff2==m]
+  mm<-min(mm)
+  return(list(m,mm))
+}
+
+# Example usage
+g <- function(x) -(x ^ 2)
+d(g, -1, 1, .1)
+```
+
+```{r, echo = sol}
+# <Your fix here>
+MaxAndMin <- function(f, x, y, s) {
+  # Returns a list of the max of an arbitrary function applied to a vector and the 
+  # minimum of the numbers that produce that max in the original vector before the
+  # function is applied.
+  #
+  # Args: 
+  #   f: function
+  #   x: start of sequence
+  #   y: end of sequence
+  #   s: sequence increment
+  # Return: 
+  #   list of max of functionized vector and minimum of numbers that produce max
+  #   from original vector
+  v <- seq(x, y, by = s)
+  v2 <- sapply(v, f)
+  max <- max(v2)
+  max_index <- v[v2 == max]
+  min <- min(max_index)
+  return(list(max, min))
+}
+
+# Example Usage
+g <- function(x) {
+  x^2
+}
+MaxAndMin(g, -1, 1, 0.1)
+```
+
+
+### Exercise 2
+Figure out what the `ss` function is doing, rewrite it so it uses more expressive functions according to our style guide.  Provide documentation.
+```{r}
+ss <- function(x) 
+{x<-x[!is.na(x)]
+a<-x[1];for(i in 2:length(x)) a[i]<-(a[i-1]+x[i])
+a<-a/(1:length(x))
+foo<-x
+cc<-0
+for(i in 1:length(foo)){x<-foo[1:i]
+c<-sort(x);
+if(length(x)%%2==0){cc[i]<-(c[floor((length(c)+1)/2)] + c[ceiling((length(c)+1)/2)])/2} else{ cc[i]<-c[(length(c)+1)/2]}}
+return(list(a,cc))
+}
+
+# Example usage
+ss(c(5,10,15,20,5,10,15,20))
+ss(1:10)
+ss(c(1,2,6,2,4,5))
+```
+
+```{r, echo = sol}
+# <Your fix here>
+ss <- function(x) {
+  # Returns the cumulative max and median of a vector
+  # 
+  # Args: 
+  #   x: vector
+  # Return: 
+  #   list of cumulative mean and median
+  x <- x[!is.na(x)]
+  lst <- x[1]
+  for (i in 2:length(x)) {
+    lst[i] <- lst[i - 1] + x[i]
+  }
+  cummean <- lst / (1:length(x))
+  lst <- x
+  cummedian <- 0
+  for(i in 1:length(lst)) {
+    x <- lst[1:i]
+    c <- sort(x)
+    if(length(x) %% 2 == 0) {
+      cummedian[i] <- (c[floor((length(c) + 1) / 2)] + 
+                         c[ceiling((length(c) + 1) / 2)]) / 2
+    } else {
+      cummedian[i] <- c[c(length(c) + 1) / 2]
+    }
+  }
+  return(list(cummean, cummedian))
+}
+
+ss(c(5, 10, 15, 20, 5, 10, 15, 20))
+ss(1:10)
+ss(c(1, 2, 6, 2, 4, 5))
+```
+
+### Exercise 3
+Rewrite the following script in a more compact form using packages we've covered in this class.  It shouldn't take more than 7 function calls---3 if you took the time to read the `dplyr` vignette!
+```{r}
+d<-iris
+dd<-unique(d[,5])
+d1<-d[which(d[,5]==dd[1]),]
+d2<-d[which(d[,5]==dd[2]),]
+d3<-d[which(d[,5]==dd[3]),]
+d1[,1] <- mean(d1[,1])
+d1[,2] <- mean(d1[,2])
+d1[,3] <- mean(d1[,3])
+d1[,4] <- mean(d1[,4])
+d2[,1] <- mean(d2[,1])
+d2[,2] <- mean(d2[,2])
+d2[,3] <- mean(d2[,3])
+d2[,4] <- mean(d2[,4])
+d3[,1] <- mean(d3[,1])
+d3[,2] <- mean(d3[,2])
+d3[,3] <- mean(d3[,3])
+d3[,4] <- mean(d3[,4])
+ddd<-rbind(d1[1,],d2[1,],d3[1,])
+rownames(ddd) <- NULL
+
+```
+
+```{r, echo = sol}
+# <Your fix here>
+library(dplyr)
+d <- iris %>% 
+  group_by(Species) %>% 
+  summarise(Sepal.Length = mean(Sepal.Length),
+            Sepal.Width = mean(Sepal.Width),
+            Petal.Length = mean(Petal.Length),
+            Petal.Width = mean(Petal.Width)) %>% 
+  select(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, Species)
+```
+
+## Remote Computing Practice
+Upload the `.rmd` file to `Documents/lab19/` on your server account and knit it using the command line. Submit the `.html` file produced by knitting on the server.  Assuming you're in the folder with the markdown file on the server, the command is:
+
+```{sh, eval = FALSE}
+Rscript -e "rmarkdown::render('lab19.Rmd')"
+```
+
+
+```{r, echo = sol}
+sessionInfo()
+```
+
