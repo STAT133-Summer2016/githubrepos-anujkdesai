@@ -15,14 +15,15 @@ shinyUI(fluidPage(
     
       checkboxGroupInput("color",
                          label = "Choose a color to subset the data",
-                         choices = sort(unique(as.character(diamonds$color))),
-                         selected = choices[1]
+                         choices = list("D", "E", "F", "G", "H", "I", "J"),
+                         selected = "D"
                          ),
       
       checkboxGroupInput("cut",
                          label = "Choose a cut to subset the data",
-                         choices = sort(unique(as.character(diamonds$cut))),
-                         selected = choices[1]
+                         choices = list("Fair", "Good", "Very Good", "Premium", 
+                                        "Ideal"),
+                         selected = "Fair"
                          )
     ),
     
