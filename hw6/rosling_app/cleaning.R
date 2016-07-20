@@ -7,9 +7,9 @@ library(tidyr)
 library(rvest)
 library(lubridate)
 
-expectancy <- read_csv("lifeexpectancy.csv")
-population <- read_csv("population.csv")
-gdp <- read_csv("gdppc.csv")
+expectancy <- read_csv("data/lifeexpectancy.csv")
+population <- read_csv("data/population.csv")
+gdp <- read_csv("data/gdppc.csv")
 
 expectancy <- expectancy %>% 
   filter(rowSums(is.na(expectancy)) < length(expectancy) - 1) %>% 
