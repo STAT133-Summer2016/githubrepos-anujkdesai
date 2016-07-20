@@ -2,6 +2,6 @@ name: rosling_app
 account: anujkdesai
 server: shinyapps.io
 appId: 115775
-bundleId: 510839
+bundleId: 510938
 url: https://anujkdesai.shinyapps.io/rosling_app/
-when: 1469048746.0254
+when: 1469055762.37057

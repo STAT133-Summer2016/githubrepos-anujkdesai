@@ -134,6 +134,10 @@ $(document).ready(function () {
 <li>Include a <code>write_csv()</code> call in your script, but don’t actually submit the cleaned csv.</li>
 </ul>
 <pre class="r"><code># &lt;Your Cleanup Code&gt;
+library(rvest)
+library(dplyr)
+library(stringr)
+
 mpg &lt;- read.csv(&quot;mpg2.csv.bz2&quot;, stringsAsFactors = FALSE, strip.white = TRUE)
 # Table scrape for car manafacturer country names
 url &lt;- &quot;https://en.wikipedia.org/wiki/Automotive_industry&quot;
@@ -247,6 +251,8 @@ write.csv(cleaned, &quot;cleaned_demographics.csv&quot;)</code></pre>
 <p>Create <code>server.R</code> and <code>ui.R</code> scripts for your app. Copy the contents of your script into the chunks below. I should be able to reproduce your app by running your cleaning script followed by your server and ui code.</p>
 <p><a href="https://anujkdesai.shinyapps.io/rosling_app/">Change the link in the parentheses to be the link to your app</a></p>
 <pre class="r"><code># &lt;Your ui code&gt;
+library(shiny)
+
 shinyUI(fluidPage(
   titlePanel(&quot;Life Expectancy and Income&quot;),
   
@@ -267,6 +273,13 @@ shinyUI(fluidPage(
 
 ))</code></pre>
 <pre class="r"><code># &lt;Your server code&gt;
+library(shiny)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(scales)
+source(&quot;cleaning.R&quot;)
+
 shinyServer(function(input, output) {
   output$plot &lt;- renderPlot({
     cleaned &lt;- filter(cleaned, year == input$slider)

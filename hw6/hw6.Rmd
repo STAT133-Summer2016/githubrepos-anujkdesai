@@ -30,6 +30,10 @@ This homework folder includes a `dirty_code.r` file that some students submitted
 
 ```{r, eval = FALSE}
 # <Your Cleanup Code>
+library(rvest)
+library(dplyr)
+library(stringr)
+
 mpg <- read.csv("mpg2.csv.bz2", stringsAsFactors = FALSE, strip.white = TRUE)
 # Table scrape for car manafacturer country names
 url <- "https://en.wikipedia.org/wiki/Automotive_industry"
@@ -152,6 +156,8 @@ Create `server.R` and `ui.R` scripts for your app.  Copy the contents of your sc
 
 ```{r ui, eval = FALSE}
 # <Your ui code>
+library(shiny)
+
 shinyUI(fluidPage(
   titlePanel("Life Expectancy and Income"),
   
@@ -175,6 +181,13 @@ shinyUI(fluidPage(
 
 ```{r server, eval = FALSE}
 # <Your server code>
+library(shiny)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(scales)
+source("cleaning.R")
+
 shinyServer(function(input, output) {
   output$plot <- renderPlot({
     cleaned <- filter(cleaned, year == input$slider)
