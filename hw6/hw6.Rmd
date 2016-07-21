@@ -218,14 +218,81 @@ shinyServer(function(input, output) {
 ## Bonus (30 points)
 There's a way to make the plot even more interactive, but not with `ggplot`.  `ggplot` has a cousin called `ggvis` that allows you to, among other things, hover over points in the plot to reveal information about that point.  Implement a `shiny` app that acts like the one in the previous part, but has the additional feature of revealing the country when you hover your cursor over the data point. The hover functionality [should look something like this](http://www.gapminder.org/tools/bubbles#_state_time_value=1831).  Upload your app to your shiny.io account and include the link below in addition to copies of your `ui.R` and `server.R` scripts.  Given that it's bonus material, I will not be providing any troubleshooting.
 
-[Change the link in the parentheses to be the link to your app](http:www.yourlinkgoeshere.com)
+[Change the link in the parentheses to be the link to your app](https://anujkdesai.shinyapps.io/bonus_app/)
 
 ```{r, eval = FALSE}
 # <Your ui code>
+library(shiny)
+library(ggvis)
+
+shinyUI(fluidPage(
+  titlePanel("Life Expectancy and Income"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("slider",
+                  label = "Year:",
+                  min = 1800,
+                  max = 2015,
+                  value = 1800,
+                  animate = TRUE),
+      uiOutput("plot_ui")
+    ),
+    
+    mainPanel(
+      ggvisOutput("plot")
+    )
+  )
+
+))
 ```
 
 ```{r, eval = FALSE}
 # <Your server code>
+library(shiny)
+library(readr)
+library(dplyr)
+library(ggvis)
+library(scales)
+
+cleaned <- read.csv("data/cleaned_demographics.csv") %>% 
+  filter(gdp >= 500 & gdp <= 100000) %>% 
+  filter(lifeexpectancy >= 18 & lifeexpectancy <= 80)
+
+shinyServer(function(input, output) {
+  clean <- reactive({
+    cleaned <- filter(cleaned, year == input$slider)
+    cleaned
+  })
+  
+  all_values <- function(x) {
+    paste0(x$country)
+  }
+  
+  clean %>% 
+    ggvis(~gdp, ~lifeexpectancy, size = ~population, opacity := 0.8,
+          key := ~country, stroke := 2) %>%
+    layer_points(fill = ~Group) %>% 
+    add_axis("x", title = "GDP Per Capita (Inflation-Adjusted)",
+             value = c(500, 5000, 50000), 
+             format = "d",
+             properties = axis_props(
+               title = list(fontSize = 18)
+             )) %>% 
+    scale_numeric("x", domain = c(400, 100000), trans = "log", expand = 0) %>% 
+    scale_numeric("y", domain = c(18, 80)) %>% 
+    scale_numeric("size", range = c(25, 2000)) %>% 
+    add_axis("y", title = "Life Expectancy at Birth",
+             value = c(25, 50, 75), 
+             properties = axis_props(
+               title = list(fontSize = 18)
+             )) %>% 
+    add_legend("fill", title = "Region") %>% 
+    hide_legend("size") %>% 
+    set_options(width = "auto", height = "400", resizable = FALSE) %>% 
+    add_tooltip(all_values, on = c("hover")) %>% 
+    bind_shiny("plot", "plot_ui")
+})
 ```
 
 ## Submission
