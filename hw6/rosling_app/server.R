@@ -3,7 +3,8 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(scales)
-source("cleaning.R")
+
+cleaned <- read.csv("data/cleaned_demographics.csv")
 
 shinyServer(function(input, output) {
   output$plot <- renderPlot({
