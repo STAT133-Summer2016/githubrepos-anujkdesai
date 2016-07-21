@@ -181,9 +181,9 @@ library(tidyr)
 library(rvest)
 library(lubridate)
 
-expectancy &lt;- read_csv(&quot;lifeexpectancy.csv&quot;)
-population &lt;- read_csv(&quot;population.csv&quot;)
-gdp &lt;- read_csv(&quot;gdppc.csv&quot;)
+expectancy &lt;- read_csv(&quot;data/lifeexpectancy.csv&quot;)
+population &lt;- read_csv(&quot;data/population.csv&quot;)
+gdp &lt;- read_csv(&quot;data/gdppc.csv&quot;)
 
 expectancy &lt;- expectancy %&gt;% 
   filter(rowSums(is.na(expectancy)) &lt; length(expectancy) - 1) %&gt;% 
@@ -234,7 +234,8 @@ cleaned &lt;- left_join(full, means) %&gt;%
   mutate(population = ifelse(is.na(population), pop, population)) %&gt;% 
   select(1:6) %&gt;% 
   mutate(year = year(years(year))) %&gt;% 
-  mutate(population = ifelse(is.nan(population), NA, population))
+  mutate(population = ifelse(is.nan(population), NA, population)) %&gt;% 
+  mutate(Group = factor(Group))
 
 write.csv(cleaned, &quot;cleaned_demographics.csv&quot;)</code></pre>
 <div id="hints-1" class="section level4">
@@ -278,7 +279,8 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(scales)
-source(&quot;cleaning.R&quot;)
+
+cleaned &lt;- read.csv(&quot;data/cleaned_demographics.csv&quot;)
 
 shinyServer(function(input, output) {
   output$plot &lt;- renderPlot({
