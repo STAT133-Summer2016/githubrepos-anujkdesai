@@ -1,0 +1,121 @@
+---
+title: "hw8"
+author: "Due: 11:59pm Saturday 8/6/2016.  Instructors stop answering questions at 5pm."
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+```
+
+### purrr
+
+In this exercise, you'll be using functional programming ideas to simulate the central limit theorem on coin flips.  Using neither loops nor the apply functions, write a simulation pipeline that:
+
+* Generates 1000 samples of each 1, 2, ..., 99, 100 fair coin flips.  So for example, you would simulate flipping 1 coins 1000 times, 2 coins 1000 times, etc.
+* For each of the 1, 2, ..., 100 flips, produces a histogram of the proportion of heads.  To be explicit: you will create a histogram for the 1000 proportions calculated from the 1 coin flips.  Then you'll do the same for 2 coin flips, 3, etc.
+
+In your plots
+* The x-axis should be limited to 0-1
+* The y-axis should be limited to 0-15
+
+
+```{r, eval = FALSE}
+CoinFlip <- function(n) {
+  heads <- sample(c(0, 1), size = n, replace = TRUE, prob = c(0.5, 0.5))
+  return(sum(heads == 1) / n)
+}
+samples <- 1000 %>% 
+  rerun(map(1:100, CoinFlip)) %>% 
+  transpose()
+
+graph <- function(n) {
+  data <- unlist(samples[[n]]) %>% data.frame()
+  return(ggplot(data) +
+           geom_histogram(aes(x = ., y = ..density..)) +
+           scale_y_continuous(limits = c(0, 15)))
+}
+
+map(1:100 , graph)
+```
+
+Now that you have all the static images, you could "animate" the progression by turning the sequence of images into a gif.  This can be achieved with the `animation` package in R or the standalone `ImageMagick` utility.  This is just an FYI, we will not be looking for a GIF.  Also, Please do NOT upload the images to GitHub nor bCourses.  We'll just be checking your code.
+
+## SQL
+
+These exercises are meant to help you wrap your head around SQL.  Answer the questions below using SQL queries.  You can check your answer using `dplyr` methods, but your grade will be based on the SQL commands.  The `nycflights13` data set has been put into a SQLlite database for these problems.  For documentation about the variable names, see
+
+```{r, eval = FALSE}
+help(package = "nycflights13")
+```
+
+```{r}
+flights <- src_sqlite("nycflights13.mysqlite3")
+```
+
+
+1. Find the full name of each airline that flew to Dallas Fort-Worth (DFW).
+```{r}
+dfw <- flights %>% tbl(sql("
+  SELECT DISTINCT
+    b.name
+  FROM
+    nyflights a INNER JOIN nyairlines b
+    ON a.carrier = b.carrier
+  WHERE
+    dest GLOB 'DFW'
+")) %>% collect()
+```
+
+2. Make a table containing the tail number, year of manufacture, model, number of engines, and number of seats of the planes flown by United Airlines (UA).  Sort the results by year manufactured.
+
+```{r}
+ua <- flights %>% tbl(sql("
+  SELECT DISTINCT
+    b.tailnum, 
+    b.year,
+    b.model,
+    b.engines, 
+    b.seats
+  FROM
+    nyflights a INNER JOIN nyplanes b
+    ON a.tailnum = b.tailnum
+  WHERE
+    a.carrier GLOB 'UA'
+  ORDER BY
+    b.year ASC,
+    b.seats ASC
+")) %>% collect()
+```
+
+3. Make a table with the following information: full airport name in a column called `Airport` and number of flights from New York City to those airports in 2013 in a column called `NumberOfFlights`.  Sort the results in descending order by flight counts.
+```{r}
+flight_counts <- flights %>% tbl(sql("
+  SELECT
+    b.name AS Airport,
+    COUNT(flight) AS NumberOfFlights
+  FROM
+    nyflights a INNER JOIN nyairports b
+    ON a.dest = b.faa
+  GROUP BY
+    AIRPORT
+  ORDER BY
+    NumberOfFlights DESC
+")) %>% collect()
+```
+
+4. Find the wind speed during the hour of the sceduled departure time of every flight that had a departure delay of more than 30 minutes.  For example, if a flight was scheduled to leave at 5:59am, you would check the wind speed for 5:00am.  In practice, you would of course be more careful than this.
+```{r}
+wind_speed <- flights %>% tbl(sql("
+  SELECT
+    b.wind_speed, a.hour, b.time_hour
+  FROM
+    nyflights a INNER JOIN nyweather b
+    ON a.origin = b.origin AND a.time_hour = b.time_hour
+  WHERE
+    a.dep_delay > 30
+"))
+```
